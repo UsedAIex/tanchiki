@@ -316,7 +316,6 @@ class Otobraz:
         # запуск цикла
         self.game(screen, width, height)
 
-
     # Основная функция
     def game(self, screen, width, height):
         game_start = False
@@ -350,6 +349,7 @@ class Otobraz:
                             # проверка, что выбрана карта один
                             if x_map_1 < event.pos[0] < x1_map_1 and y_map_1 < event.pos[1] < y1_map_1:
                                 self.choose_map = 'map_1'
+                                # choose_map = self.choose_map
                                 draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
                         if self.map_2_size:
                             x_map_2 = self.map_2_size[0]
@@ -359,6 +359,7 @@ class Otobraz:
                             # проверка, что выбрана карта два
                             if x_map_2 < event.pos[0] < x2_map_2 and y_map_2 < event.pos[1] < y2_map_2:
                                 self.choose_map = 'map_2'
+                                # choose_map = self.choose_map
                                 draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
                         # проверка, что нажата кнопка "Данные боя"
                         if (self.list_fight[0] < event.pos[0] < self.list_fight[2] + self.list_fight[0] and
@@ -640,7 +641,28 @@ def main(screen, maps, rezhim):
                 tit2 = time.time()
                 Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner)
         elif rezhim == 'Захват флага':
-            print(123456)
+            if hits:
+                winner = 'Зеленый танк'
+                bullets = pygame.sprite.Group()
+                all_sprites = pygame.sprite.Group()
+                wall_group = pygame.sprite.Group()
+                blue_tank = pygame.sprite.Group()
+                green_tank = pygame.sprite.Group()
+                blue_bulletss = 0
+                green_bulletss = 0
+                main(screen, maps, rezhim)
+
+            elif hit:
+                bullets = pygame.sprite.Group()
+                all_sprites = pygame.sprite.Group()
+                wall_group = pygame.sprite.Group()
+                blue_tank = pygame.sprite.Group()
+                green_tank = pygame.sprite.Group()
+                winner = 'Синий танк'
+                blue_bulletss = 0
+                green_bulletss = 0
+                main(screen, maps, rezhim)
+
         # Управление
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
