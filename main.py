@@ -143,7 +143,7 @@ class AnimatedSprite(pygame.sprite.Sprite):  # Основной класс, в �
                                 load_image('image/tank_blue7.png', -1), load_image('image/tank_blue8.png', -1)]
             self.images_up = [load_image('image/tank_blue_back1.png', -1), load_image('image/tank_blue_back2.png', -1),
                               load_image('image/tank_blue_back3.png', -1),
-                              load_image('image/tank_blue_back4.png', -1), load_image('image/tank_blue_back5.png'),
+                              load_image('image/tank_blue_back4.png', -1), load_image('image/tank_blue_back5.png', -1),
                               load_image('image/tank_blue_back6.png', -1),
                               load_image('image/tank_blue_back7.png', -1), load_image('image/tank_blue_back8.png', -1)]
 
@@ -592,7 +592,7 @@ def main(screen, maps, rezhim):
         dragon = AnimatedSprite(375, 750, lastMove_green)
         dragon2 = AnimatedSprite(425, 108, lastMove_blue, color="blue")
     else:
-        level_x, level_y = generate_level(load_level('map/map2.txt'))
+        level_x, level_y = generate_level(load_level('map/map3.txt'))
         dragon = AnimatedSprite(725, 750, lastMove_green)
         dragon2 = AnimatedSprite(75, 108, lastMove_blue, color="blue")
     while running:
