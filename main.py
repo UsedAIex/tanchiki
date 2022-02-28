@@ -326,18 +326,21 @@ class Otobraz:
                 if event.type == pygame.QUIT:
                     terminate()
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(self.back_work_map)
                     # проверка что мы не меню "Данные боя"
                     if self.back_work_bd:
                         if (self.list_fight[0] < event.pos[0] < self.list_fight[2] + self.list_fight[0] and
                                 self.list_fight[1] < event.pos[1] < self.list_fight[3] + self.list_fight[1]):
                             self.draw_menu(width, height)
-                            draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                            draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size, self.map_3_size,
+                                     self.map_4_size)
                             self.back_work_bd = None
                         if (self.cleat[0] < event.pos[0] < self.cleat[2] + self.cleat[0] and
                                 self.cleat[1] < event.pos[1] < self.cleat[3] + self.cleat[1]):
                             helper.delete_db()
                             self.draw_list(width, height)
                     elif self.back_work_map:
+                        print(1234)
                         if (self.list_bak[0] < event.pos[0] < self.list_bak[2] + self.list_bak[0] and
                                 self.list_bak[1] < event.pos[1] < self.list_bak[3] + self.list_bak[1]):
                             self.draw_menu(width, height)
@@ -352,7 +355,8 @@ class Otobraz:
                             if x_map_1 < event.pos[0] < x1_map_1 and y_map_1 < event.pos[1] < y1_map_1:
                                 self.choose_map = 'map_1'
                                 # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size, self.map_3_size,
+                                         self.map_4_size)
                         if self.map_2_size:
                             x_map_2 = self.map_2_size[0]
                             y_map_2 = self.map_2_size[1]
@@ -362,7 +366,8 @@ class Otobraz:
                             if x_map_2 < event.pos[0] < x2_map_2 and y_map_2 < event.pos[1] < y2_map_2:
                                 self.choose_map = 'map_2'
                                 # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size, self.map_3_size,
+                                         self.map_4_size)
                         if self.map_3_size:
                             x_map_3 = self.map_3_size[0]
                             y_map_3 = self.map_3_size[1]
@@ -370,9 +375,10 @@ class Otobraz:
                             y1_map_3 = y_map_3 + self.map_3_size[3]
                             # проверка, что выбрана карта один
                             if x_map_3 < event.pos[0] < x1_map_3 and y_map_3 < event.pos[1] < y1_map_3:
-                                self.choose_map = 'map_1'
+                                self.choose_map = 'map_3'
                                 # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size, self.map_3_size,
+                                         self.map_4_size)
                         if self.map_4_size:
                             x_map_4 = self.map_4_size[0]
                             y_map_4 = self.map_4_size[1]
@@ -380,36 +386,12 @@ class Otobraz:
                             y2_map_4 = y_map_4 + self.map_4_size[3]
                             # проверка, что выбрана карта два
                             if x_map_4 < event.pos[0] < x2_map_4 and y_map_4 < event.pos[1] < y2_map_4:
-                                self.choose_map = 'map_2'
+                                self.choose_map = 'map_4'
                                 # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size, self.map_3_size,
+                                         self.map_4_size)
 
                     else:
-                        x = self.start_game_btn_coords[0]
-                        y = self.start_game_btn_coords[1]
-                        x1 = x + self.start_game_btn_coords[2]
-                        y1 = y + self.start_game_btn_coords[3]
-                        if self.map_1_size:
-                            x_map_1 = self.map_1_size[0]
-                            y_map_1 = self.map_1_size[1]
-                            x1_map_1 = x_map_1 + self.map_1_size[2]
-                            y1_map_1 = y_map_1 + self.map_1_size[3]
-                            # проверка, что выбрана карта один
-                            if x_map_1 < event.pos[0] < x1_map_1 and y_map_1 < event.pos[1] < y1_map_1:
-                                self.choose_map = 'map_1'
-                                # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
-                        if self.map_2_size:
-                            x_map_2 = self.map_2_size[0]
-                            y_map_2 = self.map_2_size[1]
-                            x2_map_2 = x_map_2 + self.map_2_size[2]
-                            y2_map_2 = y_map_2 + self.map_2_size[3]
-                            # проверка, что выбрана карта два
-                            if x_map_2 < event.pos[0] < x2_map_2 and y_map_2 < event.pos[1] < y2_map_2:
-                                self.choose_map = 'map_2'
-                                # choose_map = self.choose_map
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
-                        # проверка, что нажата кнопка "Данные боя"
                         if (self.list_fight[0] < event.pos[0] < self.list_fight[2] + self.list_fight[0] and
                                 self.list_fight[1] < event.pos[1] < self.list_fight[3] + self.list_fight[1]):
                             self.draw_list(width, height)
@@ -425,14 +407,16 @@ class Otobraz:
                             if self.choose_rezhim == 'Обычный':
                                 self.choose_rezhim = 'Захват флага'
                                 self.draw_menu(width, height)
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                # draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
                             elif self.choose_rezhim == 'Захват флага':
                                 self.choose_rezhim = 'Обычный'
                                 self.draw_menu(width, height)
-                                draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
+                                # draw_lvl(screen, self.choose_map, self.map_1_size, self.map_2_size)
                         # проверка, что нажата кнопка "Играть"
-                        if x < event.pos[0] < x1 and y < event.pos[1] < y1:
-                            # вызываем ошибку, если не выбрана карта
+                        if (self.start_game_btn_coords[0] < event.pos[0] < self.start_game_btn_coords[2] +
+                                self.start_game_btn_coords[0] and
+                                self.start_game_btn_coords[1] < event.pos[1] < self.start_game_btn_coords[3] +
+                                self.start_game_btn_coords[1]):
                             if not self.choose_map:
                                 self.error(screen, width, height)
                             else:
@@ -450,7 +434,7 @@ class Otobraz:
         txt_back = font_txt.render('Назад', True, (255, 255, 100))
         screen.blit(txt_back, (25, 45))
         self.list_bak = (txt_back.get_width() - 60, txt_back.get_height() + 10,
-                           txt_back.get_width() + 20, txt_back.get_height() + 20)
+                         txt_back.get_width() + 20, txt_back.get_height() + 20)
         pygame.draw.rect(screen, (255, 255, 0), self.list_bak, 1)
         self.back_work_map = True
         self.map_1_size = (800 - 670, 800 - 650, 208, 206)
@@ -552,7 +536,7 @@ class Otobraz:
         txt_map = font_txt.render('Выбрать карту', True, (255, 255, 100))
         screen.blit(txt_map, (width // 2 - txt_map.get_width() // 2, height - 400))
         self.map_coords = (txt_map.get_width() + 125, 390,
-                                  txt_map.get_width() + 20, txt_map.get_height() + 20)
+                           txt_map.get_width() + 20, txt_map.get_height() + 20)
         pygame.draw.rect(screen, (255, 255, 0), self.map_coords, 1)
         screen.blit(chance, (text_chance, screen.get_height() - 300))
         self.chance_btn_coords = (text_chance - 10, screen.get_height() - 300 - chance.get_height() // 2,
@@ -626,21 +610,47 @@ class Final_menu:
 
 
 # отрисовка смены карт
-def draw_lvl(screen, choose_maps, maps_1, maps_2):
+def draw_lvl(screen, choose_maps, maps_1, maps_2, maps_3, maps_4):
     if choose_maps:
         if choose_maps == 'map_1':
             pygame.draw.rect(screen, (255, 0, 0), maps_1, 0)
             pygame.draw.rect(screen, (0, 0, 0), maps_2, 0)
-            pygame.draw.rect(screen, (0, 0, 0), maps_2, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_3, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_4, 0)
             screen.blit(map_1_ig, (800 - 666, 800 - 646))
             screen.blit(map_2_ig, (800 - 337, 800 - 646))
+            screen.blit(map_3_ig, (800 - 666, 800 - 396))
+            screen.blit(map_4_ig, (800 - 337, 800 - 396))
 
         if choose_maps == 'map_2':
             pygame.draw.rect(screen, (0, 0, 0), maps_1, 0)
-            pygame.draw.rect(screen, (0, 0, 0), maps_1, 1)
             pygame.draw.rect(screen, (255, 0, 0), maps_2, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_3, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_4, 0)
             screen.blit(map_1_ig, (800 - 666, 800 - 646))
             screen.blit(map_2_ig, (800 - 337, 800 - 646))
+            screen.blit(map_3_ig, (800 - 666, 800 - 396))
+            screen.blit(map_4_ig, (800 - 337, 800 - 396))
+
+        if choose_maps == 'map_3':
+            pygame.draw.rect(screen, (0, 0, 0), maps_1, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_2, 0)
+            pygame.draw.rect(screen, (255, 0, 0), maps_3, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_4, 0)
+            screen.blit(map_1_ig, (800 - 666, 800 - 646))
+            screen.blit(map_2_ig, (800 - 337, 800 - 646))
+            screen.blit(map_3_ig, (800 - 666, 800 - 396))
+            screen.blit(map_4_ig, (800 - 337, 800 - 396))
+
+        if choose_maps == 'map_4':
+            pygame.draw.rect(screen, (0, 0, 0), maps_1, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_2, 0)
+            pygame.draw.rect(screen, (0, 0, 0), maps_3, 0)
+            pygame.draw.rect(screen, (255, 0, 0), maps_4, 0)
+            screen.blit(map_1_ig, (800 - 666, 800 - 646))
+            screen.blit(map_2_ig, (800 - 337, 800 - 646))
+            screen.blit(map_3_ig, (800 - 666, 800 - 396))
+            screen.blit(map_4_ig, (800 - 337, 800 - 396))
         pygame.display.flip()
 
 
@@ -668,10 +678,18 @@ def main(screen, maps, rezhim):
         level_x, level_y = generate_level(load_level('map/map.txt'))
         dragon = AnimatedSprite(375, 750, lastMove_green)
         dragon2 = AnimatedSprite(425, 108, lastMove_blue, color="blue")
-    else:
-        level_x, level_y = generate_level(load_level('map/map4.txt'))
+    elif maps == 'map_2':
+        level_x, level_y = generate_level(load_level('map/map2.txt'))
         dragon = AnimatedSprite(725, 750, lastMove_green)
         dragon2 = AnimatedSprite(75, 108, lastMove_blue, color="blue")
+    elif maps == 'map_3':
+        level_x, level_y = generate_level(load_level('map/map3.txt'))
+        dragon = AnimatedSprite(725, 750, lastMove_green)
+        dragon2 = AnimatedSprite(75, 108, lastMove_blue, color="blue")
+    elif maps == 'map_4':
+        level_x, level_y = generate_level(load_level('map/map4.txt'))
+        dragon = AnimatedSprite(525, 250, lastMove_green)
+        dragon2 = AnimatedSprite(275, 608, lastMove_blue, color="blue")
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -795,7 +813,7 @@ background = load_image('image/menu.png')
 map_1_ig = load_image('image/map_one_image.png')
 map_2_ig = load_image('image/map_two_image.png')
 map_3_ig = load_image('image/map_three_image.png')
-map_4_ig = load_image('image/map_three_image.png')
+map_4_ig = load_image('image/map_four_image.png')
 
 player_group = pygame.sprite.Group()
 
