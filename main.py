@@ -3,26 +3,51 @@ import sys
 import time
 
 import pygame
+from PyQt5.QtWidgets import QInputDialog
+from PyQt5.QtWidgets import QWidget, QApplication
 
 from bd_file import Help_db
 
-pygame.init()
-hits = None
-FPS = 10
-WIDTH = 800
-HEIGHT = 800
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-clock = pygame.time.Clock()
-# helper = None
-helper = Help_db()
 
-winner = ''
-all_sprites = pygame.sprite.Group()
-green_tank = pygame.sprite.Group()
-blue_tank = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
-tiles_group = pygame.sprite.Group()
-wall_group = pygame.sprite.Group()
+def zagruzka():
+    global hits, FPS, clock, helper, winner, all_sprites, green_tank, blue_tank, bullets, tiles_group, wall_group, \
+        screen, tile_images, tile_width, tile_height, blue_bulletss, green_bulletss, choose_map, sprite, background, \
+        map_1_ig, map_2_ig, map_3_ig, map_4_ig, player_group
+
+    pygame.init()
+    hits = None
+    FPS = 10
+    WIDTH = 800
+    HEIGHT = 800
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    clock = pygame.time.Clock()
+    # helper = None
+    helper = Help_db()
+    winner = ''
+    all_sprites = pygame.sprite.Group()
+    green_tank = pygame.sprite.Group()
+    blue_tank = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
+    tiles_group = pygame.sprite.Group()
+    wall_group = pygame.sprite.Group()
+    tile_images = {
+        'wall': load_image('image/wall.png'),
+        'empty': load_image('image/floor.png')
+    }
+    tile_width = tile_height = 50
+    # группы спрайтов
+    blue_bulletss = 4
+    green_bulletss = 4
+    pygame.init()
+    choose_map = None
+    sprite = pygame.sprite.Sprite()
+    # загрузка спрайтов
+    background = load_image('image/menu.png')
+    map_1_ig = load_image('image/map_one_image.png')
+    map_2_ig = load_image('image/map_two_image.png')
+    map_3_ig = load_image('image/map_three_image.png')
+    map_4_ig = load_image('image/map_four_image.png')
+    player_group = pygame.sprite.Group()
 
 
 def terminate():  # Экстреный выход из програмы
@@ -282,22 +307,6 @@ class Bullet(pygame.sprite.Sprite):  # Класс реализует полет 
             if pygame.sprite.spritecollideany(self, wall_group):
                 self.kill()
                 blue_bulletss += 1
-
-
-tile_images = {
-    'wall': load_image('image/wall.png'),
-    'empty': load_image('image/floor.png')
-}
-
-tile_width = tile_height = 50
-
-# группы спрайтов
-
-blue_bulletss = 4
-green_bulletss = 4
-pygame.init()
-choose_map = None
-sprite = pygame.sprite.Sprite()
 
 
 # начальное меню
@@ -609,6 +618,33 @@ class Final_menu:
         pygame.draw.rect(screen, (255, 255, 0), self.list_fight, 1)
 
 
+class Example(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.user_gr()
+        self.user_bl()
+
+
+    def user_gr(self):
+        text, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
+                                                    "Введите ваш логин")
+        if ok_pressed:
+            zagruzka()
+            Otobraz()
+        else:
+            self.user_gr()
+
+
+    def user_bl(self):
+        text, ok_pressed = QInputDialog.getText(self, "Ваш логин",
+                                                    "Введите ваш логин")
+        if ok_pressed:
+            zagruzka()
+            Otobraz()
+        else:
+            self.user_bl()
+
+
 # отрисовка смены карт
 def draw_lvl(screen, choose_maps, maps_1, maps_2, maps_3, maps_4):
     if choose_maps:
@@ -808,14 +844,7 @@ def main(screen, maps, rezhim):
         clock.tick(FPS)
 
 
-# загрузка спрайтов
-background = load_image('image/menu.png')
-map_1_ig = load_image('image/map_one_image.png')
-map_2_ig = load_image('image/map_two_image.png')
-map_3_ig = load_image('image/map_three_image.png')
-map_4_ig = load_image('image/map_four_image.png')
-
-player_group = pygame.sprite.Group()
-
 if __name__ == '__main__':
-    Otobraz()
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
