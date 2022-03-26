@@ -4,7 +4,7 @@ import time
 
 import pygame
 from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox
 
 from bd_file import Help_db
 
@@ -621,28 +621,57 @@ class Final_menu:
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.user_gr()
-        self.user_bl()
+        gr_login, password_gr = self.user_gr()
+        bl_login, password_bl = self.user_bl()
+        self.cheker(gr_login, password_gr, bl_login, password_bl)
 
+    def cheker(self, user_name_gr, user_password_gr, user_name_bl, user_password_bl):
+        print(345678)
+        if user_name_gr == '':
+            uvedoml = QMessageBox()
+            uvedoml.setIcon(QMessageBox.Information)
+            uvedoml.setWindowTitle('История почищена')
+            uvedoml.setText('Готово. История очищена')
+            uvedoml.setStandardButtons(QMessageBox.Ok)
+            self.user_gr()
+        zagruzka()
 
     def user_gr(self):
-        text, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                    "Введите ваш логин")
+        user_name_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
+                                                        "Введите логин "
+                                                        "(ваш танк будет зеленым)")
+
         if ok_pressed:
-            zagruzka()
-            Otobraz()
+            gr_password = self.user_gr_23()
+            return user_name_gr, gr_password
         else:
             self.user_gr()
 
+    def user_gr_23(self):
+        user_password_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
+                                                            "Введите пароль")
+        if ok_pressed:
+            return user_password_gr
+        else:
+            self.user_gr_23()
 
     def user_bl(self):
-        text, ok_pressed = QInputDialog.getText(self, "Ваш логин",
-                                                    "Введите ваш логин")
+        user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
+                                                        "Введите логин "
+                                                        "(ваш танк будет синим)")
         if ok_pressed:
-            zagruzka()
-            Otobraz()
+            user_password_bl = self.user_b_1()
+            return user_name_bl, user_password_bl
         else:
             self.user_bl()
+
+    def user_b_1(self, ):
+        user_password_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
+                                                            "Введите пароль")
+        if ok_pressed:
+            return user_password_bl
+        else:
+            self.user_b_1()
 
 
 # отрисовка смены карт
@@ -847,4 +876,6 @@ def main(screen, maps, rezhim):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
-    sys.exit(app.exec_())
+    # app.exec_()
+    print(12345)
+    Otobraz()
