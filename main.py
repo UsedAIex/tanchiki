@@ -1,13 +1,14 @@
 import os
 import sys
 import time
-
+from data import db_session
 import pygame
 from PyQt5.QtWidgets import QInputDialog
-from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox
+from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox, QLineEdit
 
 from bd_file import Help_db
-
+# чтобы запустить неправильный PyQt5
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
 
 def zagruzka():
     global hits, FPS, clock, helper, winner, all_sprites, green_tank, blue_tank, bullets, tiles_group, wall_group, \
@@ -335,7 +336,6 @@ class Otobraz:
                 if event.type == pygame.QUIT:
                     terminate()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(self.back_work_map)
                     # проверка что мы не меню "Данные боя"
                     if self.back_work_bd:
                         if (self.list_fight[0] < event.pos[0] < self.list_fight[2] + self.list_fight[0] and
@@ -349,7 +349,6 @@ class Otobraz:
                             helper.delete_db()
                             self.draw_list(width, height)
                     elif self.back_work_map:
-                        print(1234)
                         if (self.list_bak[0] < event.pos[0] < self.list_bak[2] + self.list_bak[0] and
                                 self.list_bak[1] < event.pos[1] < self.list_bak[3] + self.list_bak[1]):
                             self.draw_menu(width, height)
@@ -626,7 +625,7 @@ class Example(QWidget):
         self.cheker(gr_login, password_gr, bl_login, password_bl)
 
     def cheker(self, user_name_gr, user_password_gr, user_name_bl, user_password_bl):
-        print(345678)
+        db_session.global_init("bd/users.sqlite")
         if user_name_gr == '':
             uvedoml = QMessageBox()
             uvedoml.setIcon(QMessageBox.Information)
@@ -649,7 +648,8 @@ class Example(QWidget):
 
     def user_gr_23(self):
         user_password_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                            "Введите пароль")
+                                                            "Введите пароль",
+                                                            QLineEdit.Password)
         if ok_pressed:
             return user_password_gr
         else:
@@ -667,7 +667,8 @@ class Example(QWidget):
 
     def user_b_1(self, ):
         user_password_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                            "Введите пароль")
+                                                            "Введите пароль",
+                                                            QLineEdit.Password)
         if ok_pressed:
             return user_password_bl
         else:
@@ -877,5 +878,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
     # app.exec_()
-    print(12345)
     Otobraz()
