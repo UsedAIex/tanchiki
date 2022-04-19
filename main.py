@@ -1,14 +1,18 @@
 import os
 import sys
 import time
-from data import db_session
+
 import pygame
 from PyQt5.QtWidgets import QInputDialog
 from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox, QLineEdit
 
 from bd_file import Help_db
+from data import db_session
+from data.users import User
+
 # чтобы запустить неправильный PyQt5
-# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
+
 
 def zagruzka():
     global hits, FPS, clock, helper, winner, all_sprites, green_tank, blue_tank, bullets, tiles_group, wall_group, \
@@ -620,59 +624,121 @@ class Final_menu:
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        gr_login, password_gr = self.user_gr()
-        bl_login, password_bl = self.user_bl()
-        self.cheker(gr_login, password_gr, bl_login, password_bl)
-
-    def cheker(self, user_name_gr, user_password_gr, user_name_bl, user_password_bl):
         db_session.global_init("bd/users.sqlite")
-        if user_name_gr == '':
+        self.db_sess = db_session.create_session()
+        gr_login_alch, gr_login = self.user_gr()
+        password_gr = self.user_gr_password()
+        bl_login = self.user_bl(gr_login)
+        password_bl = self.user_bl_password()
+        self.cheker(gr_login_alch, password_gr, bl_login, password_bl)
+
+    def cheker(self, user_gr, user_password_gr, user_name_bl, user_password_bl):
+
+        password_gr_true = user_gr.check_password(user_password_gr)
+        while not password_gr_true:
             uvedoml = QMessageBox()
             uvedoml.setIcon(QMessageBox.Information)
-            uvedoml.setWindowTitle('История почищена')
-            uvedoml.setText('Готово. История очищена')
+            uvedoml.setWindowTitle('Неверно введен пароль (1 игрок)')
+            uvedoml.setText('Неверный пароль. Что, забыл его?')
             uvedoml.setStandardButtons(QMessageBox.Ok)
-            self.user_gr()
+            uvedoml.show()
+            uvedoml.exec_()
+            password_gr_true = self.user_gr_password()
+        password_bl_true = user_gr.check_password(user_password_bl)
+        while not password_bl_true:
+            uvedoml = QMessageBox()
+            uvedoml.setIcon(QMessageBox.Information)
+            uvedoml.setWindowTitle('Неверно введен пароль (2 игрок)')
+            uvedoml.setText('Неверный пароль. Что, забыл его?')
+            uvedoml.setStandardButtons(QMessageBox.Ok)
+            uvedoml.show()
+            uvedoml.exec_()
+            user_password_bl = self.user_bl_password()
+            password_bl_true = user_gr.check_password(user_password_bl)
+
         zagruzka()
 
     def user_gr(self):
         user_name_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
                                                         "Введите логин "
                                                         "(ваш танк будет зеленым)")
-
+        user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
+        while not user_gr_alch:
+            uvedoml = QMessageBox()
+            uvedoml.setIcon(QMessageBox.Information)
+            uvedoml.setWindowTitle('Неверно введен пользователь (1 игрок)')
+            uvedoml.setText('Неверный логин')
+            uvedoml.setStandardButtons(QMessageBox.Ok)
+            uvedoml.show()
+            uvedoml.exec_()
+            user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
+                                                            "Введите логин "
+                                                            "(ваш танк будет синим)")
+            user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
         if ok_pressed:
-            gr_password = self.user_gr_23()
-            return user_name_gr, gr_password
+            return user_gr_alch, user_name_gr
         else:
-            self.user_gr()
+            terminate()
 
-    def user_gr_23(self):
+    def user_gr_password(self):
         user_password_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
                                                             "Введите пароль",
                                                             QLineEdit.Password)
         if ok_pressed:
             return user_password_gr
         else:
-            self.user_gr_23()
+            terminate()
 
-    def user_bl(self):
+    def user_bl(self, user_gr):
         user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
                                                         "Введите логин "
                                                         "(ваш танк будет синим)")
-        if ok_pressed:
-            user_password_bl = self.user_b_1()
-            return user_name_bl, user_password_bl
-        else:
-            self.user_bl()
 
-    def user_b_1(self, ):
+        user_bl = self.db_sess.query(User).filter(User.name == user_name_bl).first()
+        while not user_bl:
+            its_true = self.user_gr_ne_user_bl(user_gr, user_name_bl)
+            if not its_true:
+                uvedoml = QMessageBox()
+                uvedoml.setIcon(QMessageBox.Information)
+                uvedoml.setWindowTitle('Зачем?')
+                uvedoml.setText('Зачем ты играешь сам с собой?')
+                uvedoml.setStandardButtons(QMessageBox.Ok)
+                uvedoml.show()
+                uvedoml.exec_()
+                user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
+                                                                "Введите логин "
+                                                                "(ваш танк будет синим)")
+                continue
+            uvedoml = QMessageBox()
+            uvedoml.setIcon(QMessageBox.Information)
+            uvedoml.setWindowTitle('Неверно введен пользователь (2 игрок)')
+            uvedoml.setText('Неверный логин')
+            uvedoml.setStandardButtons(QMessageBox.Ok)
+            uvedoml.show()
+            uvedoml.exec_()
+            user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
+                                                            "Введите логин "
+                                                            "(ваш танк будет синим)")
+            user_bl = self.db_sess.query(User).filter(User.name == user_name_bl).first()
+        if ok_pressed:
+            return user_name_bl
+        else:
+            terminate()
+
+    def user_bl_password(self):
         user_password_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
                                                             "Введите пароль",
                                                             QLineEdit.Password)
         if ok_pressed:
             return user_password_bl
         else:
-            self.user_b_1()
+            terminate()
+
+    def user_gr_ne_user_bl(self, user_gr, user_name_bl):
+        if user_gr == user_name_bl:
+            return False
+        else:
+            return True
 
 
 # отрисовка смены карт

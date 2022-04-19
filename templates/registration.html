@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Form</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+</head>
+<body>
+
+<!--	<div class="form">-->
+<!--		<h1>Вход</h1>-->
+<!--		<div class="input-form">-->
+<!--			<input type="text" name="login" placeholder="Логин">-->
+<!--		</div>-->
+<!--		<div class="input-form">-->
+<!--			<input type="password" name="password" placeholder="Пароль">-->
+<!--		</div>-->
+<!--		<div class="input-form">-->
+<!--			<input type="submit" value="Войти">-->
+<!--		</div>-->
+<!--		<a href="#" class="forget">Забыли пароль?</a>-->
+<!--	</div>-->
+
+<h1>Вход</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.name.label }}<br>
+        {{ form.name(class="form-control") }}<br>
+        {% for error in form.name.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.password.label }}<br>
+        {{ form.password(class="form-control", type="password") }}<br>
+        {% for error in form.password.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{ message }}
+</form>
+
+</body>
+</html>
