@@ -325,6 +325,8 @@ class Otobraz:
         self.choose_map = choose_map
         self.map_1_size = None
         self.map_2_size = None
+        self.map_3_size = None
+        self.map_4_size = None
         self.back_work_bd = None
         self.back_work_map = None
         self.choose_rezhim = 'Обычный'
@@ -588,16 +590,16 @@ class Otobraz:
 
 # финальная заставка
 class Final_menu:
-    def __init__(self, times, bullet, winner='12'):
+    def __init__(self, times, bullet, winner, who_w):
         size = width, height = 800, 800
         screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Тесты")
         times = times[:4]
-        self.game(screen, width, height, winner, times, bullet)
+        self.game(screen, width, height, winner, times, bullet, who_w)
 
     # основная функция
-    def game(self, screen, width, height, winner, time, bullet):
-        self.draw_menu(screen, width, height, winner, time, bullet)
+    def game(self, screen, width, height, winner, time, bullet, who_w):
+        self.draw_menu(screen, width, height, winner, time, bullet, who_w)
         running = True
         while running:
             for event in pygame.event.get():
@@ -610,8 +612,8 @@ class Final_menu:
             pygame.display.flip()
 
     # отрисовка меню
-    def draw_menu(self, screen, width, height, winner, time, bullet):
-        # helper.add_db(time, bullet, winner)
+    def draw_menu(self, screen, width, height, winner, time, bullet, who_w):
+        helper.add_db(time, bullet, who_w)
         screen.blit(background, (0, 0))
         font_end = pygame.font.Font(None, 75)
         font = pygame.font.Font(None, 50)
@@ -620,9 +622,9 @@ class Final_menu:
         text_x = width // 2 - text.get_width() // 2
         text_y = height // 2 - 350
         if winner == 'Зеленый танк':
-            text_winner = font.render(winner + ' выиграл ', True, (0, 255, 0))
+            text_winner = font.render(who_w + ' выиграл ', True, (0, 255, 0))
         else:
-            text_winner = font.render(winner + ' выиграл ', True, (0, 0, 255))
+            text_winner = font.render(who_w + ' выиграл ', True, (0, 0, 255))
         x_win = width // 2 - text_winner.get_width() // 2
         y_win = height // 2 - 210
         text_time = font_text.render('Время боя: ' + time, True, (255, 255, 0))
@@ -862,6 +864,7 @@ def main(screen, maps, rezhim):
         if rezhim == 'Обычный':
             if hits:
                 winner = 'Зеленый танк'
+                who_w = us_gr_name
                 bullets = pygame.sprite.Group()
                 all_sprites = pygame.sprite.Group()
                 wall_group = pygame.sprite.Group()
@@ -870,7 +873,7 @@ def main(screen, maps, rezhim):
                 blue_bulletss = 0
                 green_bulletss = 0
                 tit2 = time.time()
-                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner)
+                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner, who_w)
 
             elif hit:
                 bullets = pygame.sprite.Group()
@@ -879,11 +882,12 @@ def main(screen, maps, rezhim):
                 blue_tank = pygame.sprite.Group()
                 green_tank = pygame.sprite.Group()
                 winner = 'Синий танк'
+                who_w = us_bl_name
                 blue_bulletss = 0
                 green_bulletss = 0
 
                 tit2 = time.time()
-                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner)
+                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner, who_w)
         elif rezhim == 'Захват флага':
             if hits:
                 winner = 'Зеленый танк'
