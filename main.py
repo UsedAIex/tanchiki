@@ -626,9 +626,9 @@ class Example(QWidget):
         super().__init__()
         db_session.global_init("bd/users.sqlite")
         self.db_sess = db_session.create_session()
-        gr_login_alch, gr_login = self.user_gr()
+        gr_login_alch = self.user_gr()
         password_gr = self.user_gr_password()
-        bl_login = self.user_bl(gr_login)
+        bl_login = self.user_bl(gr_login_alch)
         password_bl = self.user_bl_password()
         self.cheker(gr_login_alch, password_gr, bl_login, password_bl)
 
@@ -676,7 +676,7 @@ class Example(QWidget):
                                                             "(ваш танк будет зеленым)")
             user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
         if ok_pressed:
-            return user_gr_alch, user_name_gr
+            return user_gr_alch
         else:
             terminate()
 
@@ -689,17 +689,26 @@ class Example(QWidget):
         else:
             terminate()
 
-    def user_bl(self, user_gr):
+    def user_bl(self, us_gr_alch):
         user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
                                                         "Введите логин "
                                                         "(ваш танк будет синим)")
-        its_true = self.user_gr_ne_user_bl(user_gr, user_name_bl)
-        while not its_true:
-            its_true = self.user_gr_ne_user_bl(user_gr, user_name_bl)
-            if not its_true:
+        global user_bl_alch
+        while True:
+            user_bl_alch = self.db_sess.query(User).filter(User.name == user_name_bl).first()
+            if us_gr_alch == user_bl_alch:
+                uvedoml = QMessageBox()
+                uvedoml.setIcon(QMessageBox.Information)
+                uvedoml.setWindowTitle('Зачем?')
+                uvedoml.setText('Зачем ты играешь сам с собой?')
+                uvedoml.setStandardButtons(QMessageBox.Ok)
+                uvedoml.show()
+                uvedoml.exec_()
+                user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
+                                                                "Введите логин "
+                                                                "(ваш танк будет синим)")
                 continue
-            its_true = self.db_sess.query(User).filter(User.name == its_true).first()
-            if not its_true:
+            if not user_bl_alch:
                 uvedoml = QMessageBox()
                 uvedoml.setIcon(QMessageBox.Information)
                 uvedoml.setWindowTitle('Неверно введен пользователь (2 игрок)')
@@ -710,11 +719,12 @@ class Example(QWidget):
                 user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
                                                                 "Введите логин "
                                                                 "(ваш танк будет синим)")
-                its_true = self.db_sess.query(User).filter(User.name == its_true).first()
-
+                user_bl_alch = self.db_sess.query(User).filter(User.name == user_name_bl).first()
+            else:
+                break
 
         if ok_pressed:
-            return its_true
+            return user_bl_alch
         else:
             terminate()
 
@@ -727,26 +737,6 @@ class Example(QWidget):
         else:
             terminate()
 
-    def user_gr_ne_user_bl(self, user_gr, user_name_bl):
-        # print(user_gr, user_name_bl)
-        # print(user_gr == user_name_bl)
-        if user_gr != user_name_bl:
-            return True
-        else:
-            uvedoml = QMessageBox()
-            uvedoml.setIcon(QMessageBox.Information)
-            uvedoml.setWindowTitle('Зачем?')
-            uvedoml.setText('Зачем ты играешь сам с собой?')
-            uvedoml.setStandardButtons(QMessageBox.Ok)
-            uvedoml.show()
-            uvedoml.exec_()
-            user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
-                                                            "Введите логин "
-                                                            "(ваш танк будет синим)")
-            if ok_pressed:
-                return user_name_bl
-            else:
-                terminate()
 
 
 # отрисовка смены карт
