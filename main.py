@@ -14,10 +14,12 @@ from data.users import User
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
 
 
-def zagruzka():
+def zagruzka(gr_name, bl_name):
     global hits, FPS, clock, helper, winner, all_sprites, green_tank, blue_tank, bullets, tiles_group, wall_group, \
         screen, tile_images, tile_width, tile_height, blue_bulletss, green_bulletss, choose_map, sprite, background, \
         map_1_ig, map_2_ig, map_3_ig, map_4_ig, player_group
+    global us_gr_name, us_bl_name
+    us_gr_name, us_bl_name = gr_name, bl_name
 
     pygame.init()
     hits = None
@@ -532,6 +534,7 @@ class Otobraz:
         screen.blit(background, (0, 0))
         font = pygame.font.Font(None, 50)
         font_txt = pygame.font.Font(None, 35)
+        font_txt2 = pygame.font.Font(None, 25)
         text = font.render("Танчики", True, (255, 255, 100))
         rezhim = font.render("Режим: " + self.choose_rezhim, True, (255, 255, 100))
         text_rezhim = width // 2 - rezhim.get_width() // 2
@@ -563,6 +566,24 @@ class Otobraz:
         self.list_fight = (width // 2 - txt_fight.get_width() // 2 - 10, height - 160,
                            txt_fight.get_width() + 20, txt_fight.get_height() + 20)
         pygame.draw.rect(screen, (255, 255, 0), self.list_fight, 1)
+        text_user_gr = font_txt2.render("Пользователь 1", True,
+                                        (0, 255, 0))
+        text_user_gr1 = font_txt2.render("(играет на зеленом танке)", True,
+                                         (0, 255, 0))
+        text_user_gr2 = font_txt2.render(us_gr_name, True,
+                                         (0, 255, 0))
+        text_user_bl = font_txt2.render("Пользователь 2", True,
+                                        (0, 0, 255))
+        text_user_bl1 = font_txt2.render("(играет на синем танке)", True,
+                                         (0, 0, 255))
+        text_user_bl2 = font_txt2.render(us_bl_name, True,
+                                         (0, 0, 255))
+        screen.blit(text_user_gr, (50, 50))
+        screen.blit(text_user_gr1, (50, 75))
+        screen.blit(text_user_gr2, (50, 100))
+        screen.blit(text_user_bl, (600, 50))
+        screen.blit(text_user_bl1, (600, 75))
+        screen.blit(text_user_bl2, (600, 100))
 
 
 # финальная заставка
@@ -626,14 +647,13 @@ class Example(QWidget):
         super().__init__()
         db_session.global_init("bd/users.sqlite")
         self.db_sess = db_session.create_session()
-        gr_login_alch = self.user_gr()
+        gr_login_alch, gr_name = self.user_gr()
         password_gr = self.user_gr_password()
-        bl_login = self.user_bl(gr_login_alch)
+        bl_login, bl_name = self.user_bl(gr_login_alch)
         password_bl = self.user_bl_password()
-        self.cheker(gr_login_alch, password_gr, bl_login, password_bl)
+        self.cheker(gr_login_alch, password_gr, bl_login, password_bl, gr_name, bl_name)
 
-    def cheker(self, user_gr, user_password_gr, user_name_bl, user_password_bl):
-
+    def cheker(self, user_gr, user_password_gr, user_name_bl, user_password_bl, gr_name, bl_name):
         password_gr_true = user_gr.check_password(user_password_gr)
         while not password_gr_true:
             uvedoml = QMessageBox()
@@ -656,7 +676,7 @@ class Example(QWidget):
             uvedoml.exec_()
             user_password_bl = self.user_bl_password()
             password_bl_true = user_name_bl.check_password(user_password_bl)
-        zagruzka()
+        zagruzka(gr_name, bl_name)
 
     def user_gr(self):
         user_name_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
@@ -676,7 +696,7 @@ class Example(QWidget):
                                                             "(ваш танк будет зеленым)")
             user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
         if ok_pressed:
-            return user_gr_alch
+            return user_gr_alch, user_name_gr
         else:
             terminate()
 
@@ -724,7 +744,7 @@ class Example(QWidget):
                 break
 
         if ok_pressed:
-            return user_bl_alch
+            return user_bl_alch, user_name_bl
         else:
             terminate()
 
@@ -736,7 +756,6 @@ class Example(QWidget):
             return user_password_bl
         else:
             terminate()
-
 
 
 # отрисовка смены карт
