@@ -21,12 +21,14 @@
 <!--		<a href="#" class="forget">Забыли пароль?</a>-->
 <!--	</div>-->
 
-<h1>Вход</h1>
-<form action="" method="post">
+<form action="" method="post" class="form">
+    <h1 style="color: white;">Вход</h1>
     {{ form.hidden_tag() }}
     <p>
-        {{ form.name.label }}<br>
-        {{ form.name(class="form-control") }}<br>
+        <h1>{{ form.name.label }}</h1>
+        <div class="input-form">
+            {{ form.name(class="form-control") }}
+        </div>
         {% for error in form.name.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
@@ -34,15 +36,17 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.password.label }}<br>
-        {{ form.password(class="form-control", type="password") }}<br>
+        <h1>{{ form.password.label }}</h1>
+        <div class="input-form">
+            {{ form.password(class="form-control", type="password") }}
+        </div>
         {% for error in form.password.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    <a>{{ form.submit(type="submit", class="btn btn-primary") }}</a>
     {{ message }}
 </form>
 
