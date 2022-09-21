@@ -14,12 +14,10 @@ from data.users import User
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
 
 
-def zagruzka(gr_name, bl_name):
+def zagruzka():
     global hits, FPS, clock, helper, winner, all_sprites, green_tank, blue_tank, bullets, tiles_group, wall_group, \
         screen, tile_images, tile_width, tile_height, blue_bulletss, green_bulletss, choose_map, sprite, background, \
         map_1_ig, map_2_ig, map_3_ig, map_4_ig, player_group
-    global us_gr_name, us_bl_name
-    us_gr_name, us_bl_name = gr_name, bl_name
 
     pygame.init()
     hits = None
@@ -301,7 +299,7 @@ class Bullet(pygame.sprite.Sprite):  # Класс реализует полет 
             self.speedx = 10
             self.speedy = 0
 
-    def update(self):  # Обновление пули иудаление их при встречи с стенками
+    def update(self):  # Обновление пули и удаление их при встречи с стенками
         global blue_bulletss
         global green_bulletss
         self.rect.y += self.speedy
@@ -310,10 +308,12 @@ class Bullet(pygame.sprite.Sprite):  # Класс реализует полет 
             if pygame.sprite.spritecollideany(self, wall_group):
                 self.kill()
                 green_bulletss += 1
+                green_bullet_on_map -= 1
         elif self.color == 'blue':
             if pygame.sprite.spritecollideany(self, wall_group):
                 self.kill()
                 blue_bulletss += 1
+                # blue_bullet_on_map -= 1
 
 
 # начальное меню
@@ -568,38 +568,20 @@ class Otobraz:
         self.list_fight = (width // 2 - txt_fight.get_width() // 2 - 10, height - 160,
                            txt_fight.get_width() + 20, txt_fight.get_height() + 20)
         pygame.draw.rect(screen, (255, 255, 0), self.list_fight, 1)
-        text_user_gr = font_txt2.render("Пользователь 1", True,
-                                        (0, 255, 0))
-        text_user_gr1 = font_txt2.render("(играет на зеленом танке)", True,
-                                         (0, 255, 0))
-        text_user_gr2 = font_txt2.render(us_gr_name, True,
-                                         (0, 255, 0))
-        text_user_bl = font_txt2.render("Пользователь 2", True,
-                                        (0, 0, 255))
-        text_user_bl1 = font_txt2.render("(играет на синем танке)", True,
-                                         (0, 0, 255))
-        text_user_bl2 = font_txt2.render(us_bl_name, True,
-                                         (0, 0, 255))
-        screen.blit(text_user_gr, (50, 50))
-        screen.blit(text_user_gr1, (50, 75))
-        screen.blit(text_user_gr2, (50, 100))
-        screen.blit(text_user_bl, (600, 50))
-        screen.blit(text_user_bl1, (600, 75))
-        screen.blit(text_user_bl2, (600, 100))
 
 
 # финальная заставка
 class Final_menu:
-    def __init__(self, times, bullet, winner, who_w):
+    def __init__(self, times, bullet, winner):
         size = width, height = 800, 800
         screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Тесты")
         times = times[:4]
-        self.game(screen, width, height, winner, times, bullet, who_w)
+        self.game(screen, width, height, winner, times, bullet)
 
     # основная функция
-    def game(self, screen, width, height, winner, time, bullet, who_w):
-        self.draw_menu(screen, width, height, winner, time, bullet, who_w)
+    def game(self, screen, width, height, winner, time, bullet):
+        self.draw_menu(screen, width, height, winner, time, bullet)
         running = True
         while running:
             for event in pygame.event.get():
@@ -612,8 +594,8 @@ class Final_menu:
             pygame.display.flip()
 
     # отрисовка меню
-    def draw_menu(self, screen, width, height, winner, time, bullet, who_w):
-        helper.add_db(time, bullet, who_w)
+    def draw_menu(self, screen, width, height, winner, time, bullet):
+        helper.add_db(time, bullet, winner)
         screen.blit(background, (0, 0))
         font_end = pygame.font.Font(None, 75)
         font = pygame.font.Font(None, 50)
@@ -622,9 +604,9 @@ class Final_menu:
         text_x = width // 2 - text.get_width() // 2
         text_y = height // 2 - 350
         if winner == 'Зеленый танк':
-            text_winner = font.render(who_w + ' выиграл ', True, (0, 255, 0))
+            text_winner = font.render('Зел выиграл ', True, (0, 255, 0))
         else:
-            text_winner = font.render(who_w + ' выиграл ', True, (0, 0, 255))
+            text_winner = font.render('Син выиграл ', True, (0, 0, 255))
         x_win = width // 2 - text_winner.get_width() // 2
         y_win = height // 2 - 210
         text_time = font_text.render('Время боя: ' + time, True, (255, 255, 0))
@@ -643,121 +625,6 @@ class Final_menu:
                            txt_back.get_width() + 25, txt_back.get_height() + 20)
         pygame.draw.rect(screen, (255, 255, 0), self.list_fight, 1)
 
-
-class Example(QWidget):
-    def __init__(self):
-        super().__init__()
-        db_session.global_init("bd/users.sqlite")
-        self.db_sess = db_session.create_session()
-        gr_login_alch, gr_name = self.user_gr()
-        password_gr = self.user_gr_password()
-        bl_login, bl_name = self.user_bl(gr_login_alch)
-        password_bl = self.user_bl_password()
-        self.cheker(gr_login_alch, password_gr, bl_login, password_bl, gr_name, bl_name)
-
-    def cheker(self, user_gr, user_password_gr, user_name_bl, user_password_bl, gr_name, bl_name):
-        password_gr_true = user_gr.check_password(user_password_gr)
-        while not password_gr_true:
-            uvedoml = QMessageBox()
-            uvedoml.setIcon(QMessageBox.Information)
-            uvedoml.setWindowTitle('Неверно введен пароль (1 игрок)')
-            uvedoml.setText('Неверный пароль. Что, забыл его?')
-            uvedoml.setStandardButtons(QMessageBox.Ok)
-            uvedoml.show()
-            uvedoml.exec_()
-            user_password_gr = self.user_gr_password()
-            password_gr_true = user_gr.check_password(user_password_gr)
-        password_bl_true = user_name_bl.check_password(user_password_bl)
-        while not password_bl_true:
-            uvedoml = QMessageBox()
-            uvedoml.setIcon(QMessageBox.Information)
-            uvedoml.setWindowTitle('Неверно введен пароль (2 игрок)')
-            uvedoml.setText('Неверный пароль. Что, забыл его?')
-            uvedoml.setStandardButtons(QMessageBox.Ok)
-            uvedoml.show()
-            uvedoml.exec_()
-            user_password_bl = self.user_bl_password()
-            password_bl_true = user_name_bl.check_password(user_password_bl)
-        zagruzka(gr_name, bl_name)
-
-    def user_gr(self):
-        user_name_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                        "Введите логин "
-                                                        "(ваш танк будет зеленым)")
-        user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
-        while not user_gr_alch:
-            uvedoml = QMessageBox()
-            uvedoml.setIcon(QMessageBox.Information)
-            uvedoml.setWindowTitle('Неверно введен пользователь (1 игрок)')
-            uvedoml.setText('Неверный логин')
-            uvedoml.setStandardButtons(QMessageBox.Ok)
-            uvedoml.show()
-            uvedoml.exec_()
-            user_name_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                            "Введите логин "
-                                                            "(ваш танк будет зеленым)")
-            user_gr_alch = self.db_sess.query(User).filter(User.name == user_name_gr).first()
-        if ok_pressed:
-            return user_gr_alch, user_name_gr
-        else:
-            terminate()
-
-    def user_gr_password(self):
-        user_password_gr, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                            "Введите пароль",
-                                                            QLineEdit.Password)
-        if ok_pressed:
-            return user_password_gr
-        else:
-            terminate()
-
-    def user_bl(self, us_gr_alch):
-        user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
-                                                        "Введите логин "
-                                                        "(ваш танк будет синим)")
-        global user_bl_alch
-        while True:
-            user_bl_alch = self.db_sess.query(User).filter(User.name == user_name_bl).first()
-            if us_gr_alch == user_bl_alch:
-                uvedoml = QMessageBox()
-                uvedoml.setIcon(QMessageBox.Information)
-                uvedoml.setWindowTitle('Зачем?')
-                uvedoml.setText('Зачем ты играешь сам с собой?')
-                uvedoml.setStandardButtons(QMessageBox.Ok)
-                uvedoml.show()
-                uvedoml.exec_()
-                user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
-                                                                "Введите логин "
-                                                                "(ваш танк будет синим)")
-                continue
-            if not user_bl_alch:
-                uvedoml = QMessageBox()
-                uvedoml.setIcon(QMessageBox.Information)
-                uvedoml.setWindowTitle('Неверно введен пользователь (2 игрок)')
-                uvedoml.setText('Неверный логин')
-                uvedoml.setStandardButtons(QMessageBox.Ok)
-                uvedoml.show()
-                uvedoml.exec_()
-                user_name_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Blue",
-                                                                "Введите логин "
-                                                                "(ваш танк будет синим)")
-                user_bl_alch = self.db_sess.query(User).filter(User.name == user_name_bl).first()
-            else:
-                break
-
-        if ok_pressed:
-            return user_bl_alch, user_name_bl
-        else:
-            terminate()
-
-    def user_bl_password(self):
-        user_password_bl, ok_pressed = QInputDialog.getText(self, "Ваш логин Green",
-                                                            "Введите пароль",
-                                                            QLineEdit.Password)
-        if ok_pressed:
-            return user_password_bl
-        else:
-            terminate()
 
 
 # отрисовка смены карт
@@ -815,15 +682,17 @@ def main(screen, maps, rezhim):
     global wall_group
     global blue_bulletss
     global green_bulletss
+    global green_bullet_on_map
+    global blue_bullet_on_map
     clock = pygame.time.Clock()
     lastMove_blue = 'down'
     lastMove_green = 'up'
     running = True
-    blue_bulletss = 0
-    green_bulletss = 0
+    blue_bullet_on_map = 0
+    green_bullet_on_map = 0
     green_bulletss = 4
     blue_bulletss = 4
-    col_bullets_for_play = 0
+    col_bullets_za_play = 0
     # отрисовывается выбранная карта и танки
     if maps == 'map_1':
         level_x, level_y = generate_level(load_level('map/map.txt'))
@@ -848,15 +717,24 @@ def main(screen, maps, rezhim):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
                     if green_bulletss > 0:
+                        if green_bulletss > 4:
+                            green_bulletss = 4
                         green_bulletss -= 1
-                        col_bullets_for_play += 1
+                        green_bullet_on_map += 1
+                        col_bullets_za_play += 1
                         dragon.shot(color='green')
-
                 elif event.key == pygame.K_x:
                     if blue_bulletss > 0:
+                        if blue_bulletss > 4:
+                            blue_bulletss = 4
                         blue_bulletss -= 1
-                        col_bullets_for_play += 1
+                        blue_bullet_on_map += 1
+                        col_bullets_za_play += 1
                         dragon2.shot(color='blue')
+                # if blue_bulletss > 4:
+                #     blue_bulletss = 4
+                # if green_bulletss > 4:
+                #     green_bulletss = 4
 
         # Регистрация попадания пуль в танки
         hits = pygame.sprite.groupcollide(blue_tank, bullets, True, True)
@@ -864,7 +742,7 @@ def main(screen, maps, rezhim):
         if rezhim == 'Обычный':
             if hits:
                 winner = 'Зеленый танк'
-                who_w = us_gr_name
+                # who_w = us_gr_name
                 bullets = pygame.sprite.Group()
                 all_sprites = pygame.sprite.Group()
                 wall_group = pygame.sprite.Group()
@@ -873,7 +751,7 @@ def main(screen, maps, rezhim):
                 blue_bulletss = 0
                 green_bulletss = 0
                 tit2 = time.time()
-                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner, who_w)
+                Final_menu(str(tit2 - tit1), str(col_bullets_za_play), winner)
 
             elif hit:
                 bullets = pygame.sprite.Group()
@@ -882,34 +760,36 @@ def main(screen, maps, rezhim):
                 blue_tank = pygame.sprite.Group()
                 green_tank = pygame.sprite.Group()
                 winner = 'Синий танк'
-                who_w = us_bl_name
+                # who_w = us_bl_name
                 blue_bulletss = 0
                 green_bulletss = 0
 
                 tit2 = time.time()
-                Final_menu(str(tit2 - tit1), str(col_bullets_for_play), winner, who_w)
+                Final_menu(str(tit2 - tit1), str(col_bullets_za_play), winner)
         elif rezhim == 'Захват флага':
             if hits:
                 winner = 'Зеленый танк'
-                bullets = pygame.sprite.Group()
-                all_sprites = pygame.sprite.Group()
-                wall_group = pygame.sprite.Group()
+                # bullets = pygame.sprite.Group()
+                # all_sprites = pygame.sprite.Group()
+                # wall_group = pygame.sprite.Group()
                 blue_tank = pygame.sprite.Group()
-                green_tank = pygame.sprite.Group()
-                blue_bulletss = 0
-                green_bulletss = 0
-                main(screen, maps, rezhim)
+                dragon2 = AnimatedSprite(425, 108, lastMove_blue, color="blue")
+                # green_tank = pygame.sprite.Group()
+                blue_bulletss = 4
+                green_bulletss = 4
+                # main(screen, maps, rezhim)
 
             elif hit:
                 bullets = pygame.sprite.Group()
                 all_sprites = pygame.sprite.Group()
                 wall_group = pygame.sprite.Group()
-                blue_tank = pygame.sprite.Group()
+                # blue_tank = pygame.sprite.Group()
                 green_tank = pygame.sprite.Group()
                 winner = 'Синий танк'
                 blue_bulletss = 0
                 green_bulletss = 0
-                main(screen, maps, rezhim)
+                # main(screen, maps, rezhim)
+            # print(tit1)
 
         # Управление
         keys = pygame.key.get_pressed()
@@ -963,6 +843,6 @@ def main(screen, maps, rezhim):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example()
+    zagruzka()
     # app.exec_()
     Otobraz()

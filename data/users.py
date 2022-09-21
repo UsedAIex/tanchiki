@@ -13,7 +13,9 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
     def set_password(self, password):
-        self.hashed_password = generate_password_hash(password)
+        self.hashed_password = password
 
     def check_password(self, password):
-        return check_password_hash(self.hashed_password, password)
+        if self.hashed_password == password:
+            return True
+        # return check_password_hash(self.hashed_password, password)
