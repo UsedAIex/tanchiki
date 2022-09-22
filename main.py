@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QInputDialog
 from PyQt5.QtWidgets import QWidget, QApplication, QMessageBox, QLineEdit
 
 from bd_file import Help_db
-from data import db_session
-from data.users import User
+# from data import db_session
+# from data.users import User
 
 # чтобы запустить неправильный PyQt5
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r"C:\Users\Студент\PycharmProjects\pygama\venv\Lib\site-packages\PyQt5"
@@ -308,7 +308,7 @@ class Bullet(pygame.sprite.Sprite):  # Класс реализует полет 
             if pygame.sprite.spritecollideany(self, wall_group):
                 self.kill()
                 green_bulletss += 1
-                green_bullet_on_map -= 1
+                # green_bullet_on_map -= 1
         elif self.color == 'blue':
             if pygame.sprite.spritecollideany(self, wall_group):
                 self.kill()
@@ -842,7 +842,7 @@ def main(screen, maps, rezhim):
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    # app = QApplication(sys.argv)
     zagruzka()
     # app.exec_()
     Otobraz()
