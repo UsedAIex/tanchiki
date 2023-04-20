@@ -576,7 +576,7 @@ class Final_menu:
         size = width, height = 800, 800
         screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Тесты")
-        times = times[:4]
+        times = times.split('.')[0] + "," + times.split('.')[1][:2]
         self.game(screen, width, height, winner, times, bullet)
 
     # основная функция
